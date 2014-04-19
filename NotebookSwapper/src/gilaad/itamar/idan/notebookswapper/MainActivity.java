@@ -1,5 +1,8 @@
 package gilaad.itamar.idan.notebookswapper;
 
+import gilaad.itamar.idan.notebookswapper.dbhandler.AbstractDataManager;
+import gilaad.itamar.idan.notebookswapper.dbhandler.LocalDBDataManager;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
@@ -30,6 +33,11 @@ public class MainActivity extends FragmentActivity implements TabListener,IOnOff
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        if (null == AbstractDataManager.getManager())
+        {
+        	AbstractDataManager.setManager(new LocalDBDataManager(this));	
+        }
         m_lTime=null;
         m_userData = (UserData)getIntent().getSerializableExtra(UserData.USER_DATA);
         

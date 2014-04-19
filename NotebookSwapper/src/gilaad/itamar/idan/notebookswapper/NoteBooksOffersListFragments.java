@@ -1,5 +1,6 @@
 package gilaad.itamar.idan.notebookswapper;
 
+import gilaad.itamar.idan.notebookswapper.adapters.testAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -19,7 +20,8 @@ public class NoteBooksOffersListFragments extends Fragment
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_notebooks, container, false);
         lvNotebooks = (ListView)rootView.findViewById(R.id.lstNotebooks);
-        lvNotebooks.setAdapter(new SimpleListViewAdapter(getActivity(),"offersListItem"));
+//        lvNotebooks.setAdapter(new SimpleListViewAdapter(getActivity(),"offersListItem"));
+        lvNotebooks.setAdapter(new testAdapter(getActivity()));
         lvNotebooks.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
