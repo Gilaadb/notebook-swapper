@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class OffersActivity extends Activity {
+public class OfferActivity extends Activity {
 	public static String EXTRA_OFFERID = "notebookId";
 	private UserData m_userData;
 	private long m_lOfferID;

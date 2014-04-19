@@ -132,9 +132,9 @@ public class MainActivity extends FragmentActivity implements TabListener,IOnOff
 
 	@Override
 	public void OnOffersItemPicked(long id) {
-		Intent intent = new Intent(this,OffersActivity.class);
+		Intent intent = new Intent(this,OfferActivity.class);
 		intent.putExtra(UserData.USER_DATA, m_userData);
-		intent.putExtra(OffersActivity.EXTRA_OFFERID, id);
+		intent.putExtra(OfferActivity.EXTRA_OFFERID, id);
 		startActivity(intent);
 	}
 	
