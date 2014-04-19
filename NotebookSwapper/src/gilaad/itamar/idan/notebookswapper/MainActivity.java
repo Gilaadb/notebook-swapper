@@ -1,49 +1,64 @@
 package gilaad.itamar.idan.notebookswapper;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.ActionBar.TabListener;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements TabListener,IOnOffersItemPickedListner {
 
-	/*@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-		UserData userData = (UserData)getIntent().getSerializableExtra(UserData.USER_DATA);
-        if (savedInstanceState == null) {
-        	NoteBooksFragment noteBooksFragment= new NoteBooksFragment();
-        	noteBooksFragment.setUserData(userData);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, noteBooksFragment)
-                    .commit();
-        }
-    }*/
-
+	private UserData m_userData;
+	private Timer m_lTime;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        UserData userData = (UserData)getIntent().getSerializableExtra(UserData.USER_DATA);
+        m_lTime=null;
+        m_userData = (UserData)getIntent().getSerializableExtra(UserData.USER_DATA);
         
 	    final ActionBar actionBar = getActionBar();
 	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 	
 	    Tab tab1 = actionBar.newTab().setText("My Books").setIcon(android.R.drawable.btn_dialog);
 	    NoteBooksOffersListFragments offersFragment = new NoteBooksOffersListFragments();
-	    offersFragment.setUserData(userData);
-		tab1.setTabListener(new MyTabListner(offersFragment));
+	    offersFragment.setUserData(m_userData);
+		tab1.setTabListener(this);
 	    actionBar.addTab(tab1);
 	    
 	    Tab tab2 = actionBar.newTab().setText("Wish List").setIcon(android.R.drawable.alert_dark_frame);
 	    NoteBooksWishListFragment wishFragment = new NoteBooksWishListFragment();
-	    wishFragment.setUserData(userData);
-		tab2.setTabListener(new MyTabListner(wishFragment));
+	    wishFragment.setUserData(m_userData);
+		tab2.setTabListener(this);
 	    actionBar.addTab(tab2);
+	    
+	    ViewPager pageView = (ViewPager)findViewById(R.id.pager);
+	    pageView.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(),offersFragment,wishFragment));
+	    pageView.setOnPageChangeListener(
+	            new ViewPager.SimpleOnPageChangeListener() {
+	                @Override
+	                public void onPageSelected(int position) {
+	                    getActionBar().setSelectedNavigationItem(position);
+	                }
+	            });
+	    
+	    
 
 	}
 
@@ -68,5 +83,78 @@ public class MainActivity extends FragmentActivity {
     }
 
 
+    public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter{
 
+		private Fragment m_offersFragment;
+		private Fragment m_wishFragment;
+
+		public SimpleFragmentPagerAdapter(FragmentManager fm, Fragment offersFragment, Fragment wishFragment) {
+			super(fm);
+			m_offersFragment = offersFragment;
+			m_wishFragment = wishFragment;
+		}
+
+		@Override
+		public Fragment getItem(int i) {
+			switch (i)
+			{
+				case 0: return m_offersFragment;
+				case 1: return m_wishFragment;
+				default: return null;
+			}
+		}
+
+		@Override
+		public int getCount() {
+			return 2;
+		}
+    	
+    }
+
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnOffersItemPicked(long id) {
+		Intent intent = new Intent(this,OffersActivity.class);
+		intent.putExtra(UserData.USER_DATA, m_userData);
+		intent.putExtra(OffersActivity.EXTRA_OFFERID, id);
+		startActivity(intent);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if (null == m_lTime)
+		{
+			m_lTime = new Timer();
+			m_lTime.schedule(new TimerTask() {	
+				@Override
+				public void run() {
+					m_lTime = null;
+				}
+			}, new Date(Calendar.getInstance().getTimeInMillis() + TimeUnit.SECONDS.toMillis(3)));
+			Toast.makeText(this, "Press back again to quit the program", Toast.LENGTH_SHORT).show();			
+		}
+		else
+		{
+			m_lTime.cancel();
+			finish();
+		}
+	}
 }
